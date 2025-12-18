@@ -1,5 +1,4 @@
 #define TF_LITE_STATIC_MEMORY
-// #define TF_LITE_STRIP_ERROR_STRINGS
 
 #include <math.h>
 
@@ -23,26 +22,17 @@
 #include "tflite-micro/tensorflow/lite/micro/debug_log.h"
 
 
-// #include "sine_model.cc"
-// #include "sine_model_stolen.h"
-
 #include "sine_model.h"
 
 
 #include "uart.hpp"
-#include "led.hpp"
 
+
+
+const void* sine_model_data = model;
+const uint32_t sine_model_size = model_len;
 
 static void spin(uint32_t ticks) { while (ticks > 0) ticks--; };
-
-
-const void* sine_model_data = (const void *)_home_hekciu_programming_embedded_ml_tflite_wb55_bare_metal____sine_wave_model_models_sine_model_tflite;
-const uint32_t sine_model_size = _home_hekciu_programming_embedded_ml_tflite_wb55_bare_metal____sine_wave_model_models_sine_model_tflite_len;
-
-// const void* sine_model_data = sine_model;
-// const uint32_t sine_model_size = sine_model_len;
-
-
 
 static constexpr int kTensorArenaSize = 100000;
 
@@ -67,14 +57,11 @@ int main(void) {
     constexpr int kNumResourceVariables = 24;
 
     tflite::RecordingMicroAllocator* allocator(
-      tflite::RecordingMicroAllocator::Create(tensor_arena, kTensorArenaSize));
+        tflite::RecordingMicroAllocator::Create(tensor_arena, kTensorArenaSize));
     tflite::RecordingMicroInterpreter interpreter(
-      tflite::GetModel(sine_model_data), op_resolver, allocator,
-      tflite::MicroResourceVariables::Create(allocator, kNumResourceVariables));
+        tflite::GetModel(sine_model_data), op_resolver, allocator,
+        tflite::MicroResourceVariables::Create(allocator, kNumResourceVariables));
 
-    MicroPrintf("dupa\n\r");
-
-    // teraz tutaj sie wywala
     const auto debug_status = interpreter.AllocateTensors();
 
     TF_LITE_ENSURE_STATUS(debug_status);
@@ -88,10 +75,6 @@ int main(void) {
     float output_scale = output->params.scale;
     int output_zero_point = output->params.zero_point;
 
-    // Check if the predicted output is within a small range of the
-    // expected output
-    float epsilon = 0.05;
-
     constexpr int kNumTestValues = 4;
     float golden_inputs_float[kNumTestValues] = {0.77, 1.57, 2.3, 3.14};
 
@@ -104,23 +87,15 @@ int main(void) {
     for (int i = 0; i < kNumTestValues; ++i) {
         input->data.int8[0] = golden_inputs_int8[i];
         TF_LITE_ENSURE_STATUS(interpreter.Invoke());
-        // float y_pred = (output->data.int8[0] - output_zero_point) * output_scale;
-        // TFLITE_CHECK_LE(abs(sin(golden_inputs_float[i]) - y_pred), epsilon);
         output_values[i] = output->data.int8[i];
     }
 
-    MicroPrintf("test %d %d %d %d\n\r", output_values[0], output_values[1], output_values[2], output_values[3]);
+    MicroPrintf("output values %d %d %d %d\n\r", output_values[0], output_values[1], output_values[2], output_values[3]);
 
     return kTfLiteOk;
 }
 
 
-void debug_log_printf(const char* s) {
-    uart_transmit(s);
-}
-
-
-//__attribute__((naked, noreturn)) void _reset(void) {
 extern "C" __attribute__((naked, noreturn)) void Reset_Handler(void) {
     extern long _sdata, _edata, _sbss, _ebss, _sidata;
 
@@ -134,28 +109,12 @@ extern "C" __attribute__((naked, noreturn)) void Reset_Handler(void) {
         src_el++;
     }
 
-    RegisterDebugLogCallback(debug_log_printf);
+    RegisterDebugLogCallback(uart_transmit);
 
-    /* This one does work */
-    setup_green_led();
     uart_init(115200);
-
-    /* This one does not */
-    // setup_green_led();
-    // uart_init(115200);
 
     for(;;) {
         main();
-
-        blink_green_led();
-
-        // va_list vl;
-
-        //DebugLog("test\n\r", vl);
-
-        // MicroPrintf("dupa MicroPrintf\n\r");
-
-        //uart_transmit("dupa uart_transmit\r\n");
 
         spin(99999);
     }

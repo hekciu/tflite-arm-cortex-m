@@ -11,16 +11,6 @@ CMSIS_CORE_INCLUDE=cmsis/cmsis_core/CMSIS/Core/Include
 CMSIS_WB_INCLUDE=cmsis/cmsis_wb/Include
 
 
-led.o: cc/led.cc Makefile
-	${ARM_NONE_EABI}-g++ \
-    -mcpu=cortex-m4 \
-    -fno-exceptions \
-    -g \
-    -I${CMSIS_CORE_INCLUDE} \
-    -I${CMSIS_WB_INCLUDE} \
-    -I./inc \
-    cc/led.cc -c -o led.o
-
 uart.o: cc/uart.cc Makefile
 	${ARM_NONE_EABI}-g++ \
     -mcpu=cortex-m4 \
@@ -42,14 +32,14 @@ main.o: main.cc Makefile
     -I./inc \
     main.cc -c -o main.o
 
-firmware.elf: main.o uart.o led.o link.ld
+firmware.elf: main.o uart.o link.ld
 	${ARM_NONE_EABI}-g++ \
 	-T link.ld \
     -nostdlib \
     -mcpu=cortex-m4 \
     -fno-exceptions \
     -g \
-	main.o uart.o led.o -o firmware.elf
+	main.o uart.o -o firmware.elf
 
 firmware.bin: firmware.elf
 	${ARM_NONE_EABI}-objcopy -O binary firmware.elf firmware.bin

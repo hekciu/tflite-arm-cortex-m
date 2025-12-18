@@ -1,2 +1,3 @@
 tflite-micro/
 cmsis/
+sine_model.h

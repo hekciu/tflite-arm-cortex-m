@@ -1,3 +1,8 @@
+'''
+    Heavily inspired by this example:
+    - https://colab.research.google.com/github/tensorflow/tflite-micro/blob/18aec279a0f35af82e4543feae00e1c87a75c8bf/tensorflow/lite/micro/examples/hello_world/train/train_hello_world_model.ipynb#scrollTo=5PYwRF
+'''
+
 import os
 
 import tensorflow as tf
@@ -121,13 +126,12 @@ converter.optimizations = [tf.lite.Optimize.DEFAULT]
 # Enforce integer only quantization
 converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
 
+# Set output and input tensors as 1-byte integers
 converter.target_spec.supported_types = [tf.int8]
 converter.inference_input_type = tf.int8
 converter.inference_output_type = tf.int8
 
-# Provide a representative dataset to ensure we quantize correctly.
 converter.representative_dataset = representative_dataset
 model_tflite = converter.convert()
 
-# Save the model to disk
 open(MODEL_TFLITE, "wb").write(model_tflite)
