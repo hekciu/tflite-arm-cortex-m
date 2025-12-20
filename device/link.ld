@@ -1,7 +1,7 @@
 
 ENTRY(Reset_Handler);
 
-SEARCH_DIR(tflite-micro/gen/cortex_m_generic_cortex-m4_default_cmsis_nn_gcc/lib)
+SEARCH_DIR(tflite-micro/gen/cortex_m_generic_cortex-m4_release_cmsis_nn_gcc/lib)
 INPUT(-ltensorflow-microlite)
 
 SEARCH_DIR(tflite-micro/tensorflow/lite/micro/tools/make/downloads/gcc_embedded/arm-none-eabi/lib)
@@ -23,7 +23,7 @@ INPUT(-lstdc++_nano)
 INPUT(-lsupc++)
 INPUT(-lsupc++_nano)
 
-SEARCH_DIR(tensorflow/lite/micro/tools/make/downloads/gcc_embedded/lib/gcc/arm-none-eabi/14.3.1)
+SEARCH_DIR(tflite-micro/tensorflow/lite/micro/tools/make/downloads/gcc_embedded/lib/gcc/arm-none-eabi/14.3.1)
 INPUT(-lgcc)
 
 

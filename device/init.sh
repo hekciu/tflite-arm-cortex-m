@@ -8,20 +8,16 @@ git clone --depth 1 --branch 'v1.12.3' https://github.com/STMicroelectronics/cms
 git clone --depth 1 https://github.com/tensorflow/tflite-micro
 cd tflite-micro
 
-echo "Checking python version, needed for building tflite-micro"
-python3 --version
+echo "Checking python, pip, numpy and pil versions, needed for building tflite-micro tests"
+python3 --version     
+python3 -m pip --version
+python3 -m pip show numpy
+python3 -m pip show pillow
 
-echo "Creating venv"
-mkdir -p venv
-python3 -m venv ./venv
-./venv/bin/python3 -m pip install numpy
-
-echo "Creating alias for python3 so google's python script will execute using our venv"
-
-alias python3='./venv/bin/python3'
 
 make -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=cortex_m_generic \
     TARGET_ARCH=cortex-m4 \
     OPTIMIZED_KERNEL_DIR=cmsis_nn \
+    BUILD_TYPE=release \
     microlite
