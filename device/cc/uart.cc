@@ -9,6 +9,10 @@
 void uart_init(uint32_t baud) {
     GPIO_TypeDef* gpio = GPIOB;
 
+    /* Enable GPIOB */
+    RCC->AHB2ENR |= BIT(1);
+
+    /* Enable USART */
     RCC->APB2ENR |= BIT(14);
 
     uint32_t af = 7;
