@@ -19,5 +19,5 @@ make -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=cortex_m_generic \
     TARGET_ARCH=cortex-m4 \
     OPTIMIZED_KERNEL_DIR=cmsis_nn \
-    BUILD_TYPE=release \
+    BUILD_TYPE=default \
     microlite

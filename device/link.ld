@@ -1,7 +1,7 @@
 
 ENTRY(Reset_Handler);
 
-SEARCH_DIR(tflite-micro/gen/cortex_m_generic_cortex-m4_release_cmsis_nn_gcc/lib)
+SEARCH_DIR(tflite-micro/gen/cortex_m_generic_cortex-m4_default_cmsis_nn_gcc/lib)
 INPUT(-ltensorflow-microlite)
 
 SEARCH_DIR(tflite-micro/tensorflow/lite/micro/tools/make/downloads/gcc_embedded/arm-none-eabi/lib)

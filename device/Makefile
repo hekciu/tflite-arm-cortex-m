@@ -14,6 +14,7 @@ uart.o: cc/uart.cc Makefile
 	${ARM_NONE_EABI}-g++ \
     -mcpu=cortex-m4 \
     -fno-exceptions \
+    -fno-unwind-tables \
     -g \
     -I${CMSIS_CORE_INCLUDE} \
     -I${CMSIS_WB_INCLUDE} \
@@ -24,6 +25,7 @@ main.o: main.cc Makefile
 	${ARM_NONE_EABI}-g++ \
     -mcpu=cortex-m4 \
     -fno-exceptions \
+    -fno-unwind-tables \
     -g \
     -I${TFLITE_INCLUDE_PATH} \
     -I${FLATBUFFERS_INCLUDE_PATH} \
@@ -31,12 +33,13 @@ main.o: main.cc Makefile
     -I./inc \
     main.cc -c -o main.o
 
-firmware.elf: main.o uart.o link.ld
+firmware.elf: main.o uart.o link.ld Makefile
 	${ARM_NONE_EABI}-g++ \
 	-T link.ld \
     -nostdlib \
     -mcpu=cortex-m4 \
     -fno-exceptions \
+    -fno-unwind-tables \
     -g \
 	main.o uart.o -o firmware.elf
 
